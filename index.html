@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Treningsdagbok</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F5F7; --surface:#FFFFFF; --ink:#15202B; --muted:#5D6B78; --line:#DCE2E8;
+  --accent:#1F4FD1; --accent-ink:#FFFFFF; --soft:#E7EDFB; --danger:#B42318;
+  --styrke:#1F4FD1; --kondisjon:#0E8A7E; --fotball:#3F8F1F; --generell:#8A4FD1;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0F151B; --surface:#17202A; --ink:#E6ECF2; --muted:#93A1AE; --line:#2A3642;
+  --accent:#7FA2FF; --accent-ink:#0B1220; --soft:#1C2A44; --danger:#FF8A7A;
+  --styrke:#7FA2FF; --kondisjon:#3CC7B6; --fotball:#7BCB55; --generell:#BC95FF; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:20px 48px;display:grid;gap:20px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--f-display);font-weight:700;font-size:2.4rem;line-height:1;margin:0;letter-spacing:.01em;text-transform:uppercase;text-wrap:balance}
+h1 small{display:block;font-family:var(--f-body);font-size:.8rem;font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;margin-top:6px}
+h2{font-family:var(--f-display);font-weight:600;font-size:1.5rem;margin:0;text-transform:uppercase;letter-spacing:.02em}
+h3{font-family:var(--f-display);font-weight:600;font-size:1.1rem;margin:0;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.who{display:flex;gap:10px;align-items:center;font-size:.85rem;color:var(--muted);flex-wrap:wrap}
+.who b{font-weight:500;color:var(--ink);overflow-wrap:anywhere}
+nav{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+nav button{flex:1;border:0;background:transparent;color:var(--muted);font:600 1.05rem var(--f-display);text-transform:uppercase;letter-spacing:.05em;padding:10px 6px;border-radius:7px;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+section.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:18px;min-width:0}
+label{display:grid;gap:4px;font-size:.78rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.lbl{font-size:.78rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+input,select,textarea{font:400 1rem var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;min-width:0}
+textarea{min-height:70px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.types{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.types input{position:absolute;opacity:0;pointer-events:none;width:auto}
+.types label{border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:.95rem;color:var(--ink);display:flex;gap:10px;align-items:center}
+.types label::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--c)}
+.types input:checked+label{border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c);background:var(--soft)}
+.types input:focus-visible+label{outline:2px solid var(--accent);outline-offset:2px}
+.rpe-row{display:flex;align-items:center;gap:12px}
+.rpe-row input{padding:0;accent-color:var(--accent);background:transparent;border:0}
+.rpe-val{font:600 1.6rem var(--f-display);min-width:3.5ch;text-align:right;font-variant-numeric:tabular-nums}
+.hint{font-size:.8rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400}
+.ex-list{display:grid;gap:8px}
+.ex{display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(54px,.7fr)) auto;gap:6px;align-items:end}
+.ex label{font-size:.7rem}
+button.btn{font:600 1rem var(--f-display);text-transform:uppercase;letter-spacing:.05em;border-radius:8px;padding:10px 16px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink)}
+button.btn:disabled{opacity:.6;cursor:wait}
+button.ghost{background:transparent;color:var(--accent)}
+button.link{border:0;background:none;color:var(--accent);font:inherit;padding:0;cursor:pointer;text-decoration:underline}
+button.icon{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:8px;width:38px;height:40px;cursor:pointer;font-size:1.1rem}
+button.danger{border-color:var(--danger);color:var(--danger);background:transparent}
+button.danger.armed{background:var(--danger);color:var(--surface)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.msg{font-size:.9rem;color:var(--muted)}
+.msg.err{color:var(--danger)}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:5px 12px;font-size:.85rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.month{display:grid;gap:8px}
+.month h3{padding-top:6px}
+.entry{border:1px solid var(--line);border-left:4px solid var(--c);border-radius:8px;padding:12px 14px;display:grid;gap:6px;min-width:0}
+.entry-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.entry-title{font-weight:600}
+.date{font-family:var(--f-mono);font-size:.82rem;color:var(--muted)}
+.facts{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.82rem;font-variant-numeric:tabular-nums}
+.pill{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--c)}
+.entry p{margin:0;font-size:.92rem;color:var(--muted);overflow-wrap:anywhere;white-space:pre-wrap}
+.entry table{border-collapse:collapse;font-size:.85rem;font-variant-numeric:tabular-nums}
+.entry td{padding:2px 14px 2px 0}
+.entry .actions button{padding:5px 12px;font-size:.85rem}
+.empty{border:1px dashed var(--line);border-radius:10px;padding:22px;text-align:center;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:10px;padding:12px}
+.stat b{display:block;font:700 2rem/1 var(--f-display);font-variant-numeric:tabular-nums;margin-top:4px}
+.stat span{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+.stat em{display:block;font-style:normal;font-size:.75rem;color:var(--muted)}
+.chart{overflow-x:auto}
+.chart svg{display:block;width:100%;height:auto;min-width:420px}
+.chart text{fill:var(--muted);font-family:var(--f-mono);font-size:11px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--c);margin-right:6px;vertical-align:-1px}
+.t-styrke{--c:var(--styrke)} .t-kondisjon{--c:var(--kondisjon)} .t-fotball{--c:var(--fotball)} .t-generell{--c:var(--generell)}
+.auth{max-width:420px;width:100%;margin:0 auto}
+.auth form{display:grid;gap:14px}
+.seg{display:flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:4px}
+.seg button{flex:1;border:0;background:transparent;color:var(--muted);font:600 1rem var(--f-display);text-transform:uppercase;letter-spacing:.05em;padding:8px;border-radius:7px;cursor:pointer}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+@media (max-width:520px){
+  .ex{grid-template-columns:repeat(3,minmax(0,1fr)) auto}
+  .ex .ex-name{grid-column:1/-1}
+  h1{font-size:2rem}
+}
+@media (prefers-reduced-motion:no-preference){nav button,.chip,.types label,.seg button{transition:background .15s,border-color .15s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Treningsdagbok<small>Styrke, kondisjon, fotball og alt annet</small></h1>
+    <div class="who" id="who" hidden><span>Logget inn som <b id="who-email"></b></span><button class="btn ghost" id="logout" type="button">Logg ut</button></div>
+  </header>
+
+  <!-- OPPSETT MANGLER -->
+  <section class="panel" id="view-config" hidden>
+    <h2>Nesten klar</h2>
+    <p style="margin:0">Appen vet ikke hvilket Supabase-prosjekt den skal bruke ennå. Åpne <b>config.js</b> og lim inn prosjektets URL og publishable key. Se steg 3 i README.md.</p>
+  </section>
+
+  <!-- INNLOGGING -->
+  <section class="panel auth" id="view-auth" hidden>
+    <div class="seg" role="tablist">
+      <button type="button" role="tab" id="seg-login" aria-selected="true">Logg inn</button>
+      <button type="button" role="tab" id="seg-signup" aria-selected="false">Lag konto</button>
+    </div>
+    <form id="auth-form" novalidate>
+      <label>E-post<input type="email" id="a-email" autocomplete="email" required></label>
+      <label>Passord<input type="password" id="a-pass" autocomplete="current-password" minlength="6" required></label>
+      <div class="actions">
+        <button type="submit" class="btn" id="a-submit">Logg inn</button>
+        <button type="button" class="link" id="a-forgot">Glemt passord?</button>
+      </div>
+      <span class="msg" id="a-msg" role="status"></span>
+    </form>
+  </section>
+
+  <!-- NYTT PASSORD -->
+  <section class="panel auth" id="view-reset" hidden>
+    <h2>Velg nytt passord</h2>
+    <form id="reset-form" novalidate>
+      <label>Nytt passord<input type="password" id="r-pass" autocomplete="new-password" minlength="6" required></label>
+      <div class="actions"><button type="submit" class="btn">Lagre passord</button></div>
+      <span class="msg" id="r-msg" role="status"></span>
+    </form>
+  </section>
+
+  <!-- APPEN -->
+  <div id="app" hidden style="display:grid;gap:20px">
+    <nav role="tablist">
+      <button role="tab" type="button" aria-selected="true" data-view="logg">Ny økt</button>
+      <button role="tab" type="button" aria-selected="false" data-view="hist">Historikk</button>
+      <button role="tab" type="button" aria-selected="false" data-view="over">Oversikt</button>
+    </nav>
+
+    <section class="panel" id="view-logg">
+      <h2 id="form-title">Ny økt</h2>
+      <form id="form" novalidate>
+        <div style="display:grid;gap:18px">
+          <div>
+            <div class="lbl">Type økt</div>
+            <div class="types">
+              <input type="radio" name="type" id="ty-styrke" value="styrke" checked><label for="ty-styrke" class="t-styrke">Styrke</label>
+              <input type="radio" name="type" id="ty-kondisjon" value="kondisjon"><label for="ty-kondisjon" class="t-kondisjon">Kondisjon</label>
+              <input type="radio" name="type" id="ty-fotball" value="fotball"><label for="ty-fotball" class="t-fotball">Fotball</label>
+              <input type="radio" name="type" id="ty-generell" value="generell"><label for="ty-generell" class="t-generell">Annet</label>
+            </div>
+          </div>
+
+          <div class="grid">
+            <label>Dato<input type="date" id="f-dato" required></label>
+            <label>Varighet (min)<input type="number" id="f-varighet" min="1" max="600" inputmode="numeric" placeholder="60"></label>
+            <label style="grid-column:1/-1">Tittel<input type="text" id="f-tittel" maxlength="80" placeholder="F.eks. Bein og kjerne"></label>
+          </div>
+
+          <div id="sec-styrke" style="display:grid;gap:8px">
+            <div class="lbl">Øvelser <span class="hint">Sett × reps × kg. La kg stå tomt for kroppsvekt.</span></div>
+            <div class="ex-list" id="ex-list"></div>
+            <div><button type="button" class="btn ghost" id="add-ex">+ Legg til øvelse</button></div>
+          </div>
+
+          <div id="sec-kondisjon" class="grid" hidden>
+            <label>Aktivitet
+              <select id="f-aktivitet"><option>Løping</option><option>Sykling</option><option>Svømming</option><option>Ski</option><option>Gåtur</option><option>Annet</option></select>
+            </label>
+            <label>Distanse (km)<input type="number" id="f-distanse" min="0" step="0.01" inputmode="decimal" placeholder="5,0"></label>
+            <label>Snittpuls<input type="number" id="f-puls" min="40" max="230" inputmode="numeric" placeholder="150"></label>
+          </div>
+
+          <div id="sec-fotball" class="grid" hidden>
+            <label>Hva slags
+              <select id="f-fotball"><option>Lagtrening</option><option>Kamp</option><option>Egentrening</option></select>
+            </label>
+            <label>Mål / målgivende<input type="text" id="f-mal" maxlength="40" placeholder="1 mål, 1 assist"></label>
+          </div>
+
+          <label>Hvor tung var økta? (RPE 1–10)
+            <div class="rpe-row">
+              <input type="range" id="f-rpe" min="1" max="10" value="6">
+              <span class="rpe-val" id="rpe-val">6</span>
+            </div>
+            <span class="hint" id="rpe-txt">Ganske hard</span>
+          </label>
+
+          <label>Notater<textarea id="f-notat" maxlength="1000" placeholder="Hvordan føltes det? Noe å huske til neste gang?"></textarea></label>
+
+          <div class="actions">
+            <button type="submit" class="btn" id="save">Lagre økt</button>
+            <button type="button" class="btn ghost" id="cancel" hidden>Avbryt redigering</button>
+            <span class="msg" id="form-msg" role="status"></span>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel" id="view-hist" hidden>
+      <div class="actions" style="justify-content:space-between">
+        <h2>Historikk</h2>
+        <div class="filters" id="filters">
+          <button type="button" class="chip" data-f="alle" aria-pressed="true">Alle</button>
+          <button type="button" class="chip" data-f="styrke" aria-pressed="false">Styrke</button>
+          <button type="button" class="chip" data-f="kondisjon" aria-pressed="false">Kondisjon</button>
+          <button type="button" class="chip" data-f="fotball" aria-pressed="false">Fotball</button>
+          <button type="button" class="chip" data-f="generell" aria-pressed="false">Annet</button>
+        </div>
+      </div>
+      <div id="hist-list" style="display:grid;gap:16px"></div>
+    </section>
+
+    <section class="panel" id="view-over" hidden>
+      <h2>Oversikt</h2>
+      <div class="stats" id="stats"></div>
+      <div style="display:grid;gap:10px">
+        <h3>Minutter per uke</h3>
+        <div class="legend">
+          <span class="t-styrke">Styrke</span><span class="t-kondisjon">Kondisjon</span><span class="t-fotball">Fotball</span><span class="t-generell">Annet</span>
+        </div>
+        <div class="chart" id="week-chart"></div>
+      </div>
+      <div style="display:grid;gap:10px">
+        <div class="actions" style="justify-content:space-between">
+          <h3>Fremgang i styrke</h3>
+          <select id="ex-pick" style="width:auto;min-width:160px" aria-label="Velg øvelse"></select>
+        </div>
+        <div class="chart" id="prog-chart"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script>
+(function(){
+  const TYPES={styrke:"Styrke",kondisjon:"Kondisjon",fotball:"Fotball",generell:"Annet"};
+  const RPE_TXT=["","Veldig lett","Lett","Lett","Moderat","Moderat","Ganske hard","Hard","Veldig hard","Nesten maks","Maks"];
+  const $=s=>document.querySelector(s);
+  const el=(tag,attrs={},...kids)=>{const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs)){if(k==="class")e.className=v;else if(k==="text")e.textContent=v;else e.setAttribute(k,v)}kids.forEach(c=>e.append(c));return e};
+
+  let sb=null, user=null, okter=[], editingId=null, filter="alle";
+
+  // ---------- skjermer ----------
+  function screen(name){
+    $("#view-config").hidden=name!=="config";
+    $("#view-auth").hidden=name!=="auth";
+    $("#view-reset").hidden=name!=="reset";
+    $("#app").hidden=name!=="app";
+    $("#who").hidden=name!=="app";
+  }
+
+  // ---------- datoer og tall ----------
+  const today=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)};
+  const parse=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+  const MND=["januar","februar","mars","april","mai","juni","juli","august","september","oktober","november","desember"];
+  const DAG=["søn","man","tir","ons","tor","fre","lør"];
+  const fmtDate=s=>{const d=parse(s);return `${DAG[d.getDay()]} ${d.getDate()}.${d.getMonth()+1}.`};
+  function isoWeek(d){const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-day);const y0=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil(((t-y0)/864e5+1)/7)}
+  function monday(d){const x=new Date(d);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);x.setHours(0,0,0,0);return x}
+  const num=v=>{if(v===""||v==null)return null;const n=Number(String(v).replace(",","."));return isFinite(n)?n:null};
+  const nf=(n,d=0)=>Number(n).toLocaleString("nb-NO",{maximumFractionDigits:d,minimumFractionDigits:0});
+
+  // ---------- innlogging ----------
+  let mode="login";
+  function setMode(m){
+    mode=m;
+    $("#seg-login").setAttribute("aria-selected",m==="login");
+    $("#seg-signup").setAttribute("aria-selected",m==="signup");
+    $("#a-submit").textContent=m==="login"?"Logg inn":"Lag konto";
+    $("#a-pass").autocomplete=m==="login"?"current-password":"new-password";
+    $("#a-forgot").hidden=m!=="login";
+    authMsg("");
+  }
+  $("#seg-login").addEventListener("click",()=>setMode("login"));
+  $("#seg-signup").addEventListener("click",()=>setMode("signup"));
+  function authMsg(t,err){const m=$("#a-msg");m.textContent=t;m.classList.toggle("err",!!err)}
+
+  const AUTH_ERR={
+    "Invalid login credentials":"Feil e-post eller passord.",
+    "Email not confirmed":"Du må bekrefte e-posten først. Sjekk innboksen din.",
+    "User already registered":"Det finnes allerede en konto med denne e-posten. Logg inn i stedet.",
+  };
+  const authErr=e=>AUTH_ERR[e?.message]||(e?.status===429?"For mange forsøk. Vent litt og prøv igjen.":(e?.message||"Noe gikk galt."));
+  const redirectUrl=()=>location.origin+location.pathname;
+
+  $("#auth-form").addEventListener("submit",async e=>{
+    e.preventDefault();
+    const email=$("#a-email").value.trim(),password=$("#a-pass").value;
+    if(!email||!email.includes("@"))return authMsg("Skriv inn e-postadressen din.",true);
+    if(password.length<6)return authMsg("Passordet må ha minst 6 tegn.",true);
+    $("#a-submit").disabled=true;authMsg("");
+    try{
+      if(mode==="login"){
+        const{error}=await sb.auth.signInWithPassword({email,password});
+        if(error)throw error;
+      }else{
+        const{data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:redirectUrl()}});
+        if(error)throw error;
+        if(!data.session)authMsg("Kontoen er laget. Sjekk e-posten din og klikk på lenken for å bekrefte, så kan du logge inn.");
+      }
+    }catch(err){authMsg(authErr(err),true)}
+    finally{$("#a-submit").disabled=false}
+  });
+
+  $("#a-forgot").addEventListener("click",async()=>{
+    const email=$("#a-email").value.trim();
+    if(!email)return authMsg("Skriv inn e-postadressen din først, og trykk så på «Glemt passord?».",true);
+    const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:redirectUrl()});
+    if(error)return authMsg(authErr(error),true);
+    authMsg("Hvis det finnes en konto med denne e-posten, har vi sendt en lenke for å lage nytt passord.");
+  });
+
+  $("#reset-form").addEventListener("submit",async e=>{
+    e.preventDefault();
+    const password=$("#r-pass").value;
+    const m=$("#r-msg");
+    if(password.length<6){m.textContent="Passordet må ha minst 6 tegn.";m.classList.add("err");return}
+    const{error}=await sb.auth.updateUser({password});
+    if(error){m.textContent=authErr(error);m.classList.add("err");return}
+    m.textContent="";enterApp();
+  });
+
+  $("#logout").addEventListener("click",async()=>{await sb.auth.signOut()});
+
+  async function enterApp(){
+    screen("app");
+    $("#who-email").textContent=user.email||"";
+    await load();
+  }
+
+  // ---------- data ----------
+  async function load(){
+    const{data,error}=await sb.from("okter").select("*").order("dato",{ascending:false}).order("opprettet",{ascending:false});
+    if(error){$("#hist-list").innerHTML="";$("#hist-list").append(el("div",{class:"empty",text:"Kunne ikke hente øktene: "+error.message}));return}
+    okter=data||[];
+    renderAll();
+  }
+
+  // ---------- faner ----------
+  document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>show(b.dataset.view)));
+  function show(v){
+    document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.view===v));
+    ["logg","hist","over"].forEach(x=>$("#view-"+x).hidden=x!==v);
+    try{localStorage.setItem("trening-tab",v)}catch(e){}
+    if(v==="over")renderOverview();
+  }
+
+  // ---------- skjema ----------
+  const currentType=()=>document.querySelector('input[name="type"]:checked').value;
+  function syncType(){const t=currentType();["styrke","kondisjon","fotball"].forEach(x=>$("#sec-"+x).hidden=x!==t)}
+  document.querySelectorAll('input[name="type"]').forEach(r=>r.addEventListener("change",syncType));
+  const rpe=$("#f-rpe");
+  const syncRpe=()=>{$("#rpe-val").textContent=rpe.value;$("#rpe-txt").textContent=RPE_TXT[rpe.value]};
+  rpe.addEventListener("input",syncRpe);
+
+  let exCount=0;
+  function addEx(o={}){
+    const i=exCount++;
+    const row=el("div",{class:"ex"});
+    const mk=(lab,id,attrs,val,cls)=>{const inp=el("input",Object.assign({id},attrs));if(val!=null)inp.value=val;return el("label",cls?{class:cls}:{},lab,inp)};
+    row.append(
+      mk("Øvelse","ex-n-"+i,{type:"text",maxlength:"50",placeholder:"Knebøy",list:"ex-names"},o.navn,"ex-name"),
+      mk("Sett","ex-s-"+i,{type:"number",min:"1",max:"20",inputmode:"numeric",placeholder:"3"},o.sett),
+      mk("Reps","ex-r-"+i,{type:"number",min:"1",max:"200",inputmode:"numeric",placeholder:"10"},o.reps),
+      mk("Kg","ex-k-"+i,{type:"number",min:"0",step:"0.5",inputmode:"decimal",placeholder:"–"},o.kg)
+    );
+    const rm=el("button",{type:"button",class:"icon","aria-label":"Fjern øvelse",text:"×"});
+    rm.addEventListener("click",()=>{row.remove();if(!$("#ex-list").children.length)addEx()});
+    row.append(rm);
+    $("#ex-list").append(row);
+  }
+  $("#add-ex").addEventListener("click",()=>addEx());
+  const dl=el("datalist",{id:"ex-names"});document.body.append(dl);
+
+  function resetForm(){
+    editingId=null;
+    $("#form").reset();
+    $("#f-dato").value=today();
+    $("#ty-styrke").checked=true;
+    $("#ex-list").innerHTML="";addEx();
+    rpe.value=6;syncRpe();syncType();
+    $("#form-title").textContent="Ny økt";$("#save").textContent="Lagre økt";$("#cancel").hidden=true;
+  }
+  $("#cancel").addEventListener("click",()=>{resetForm();setMsg("")});
+
+  function readForm(){
+    const t=currentType();
+    const o={type:t,dato:$("#f-dato").value,tittel:$("#f-tittel").value.trim()||null,varighet:num($("#f-varighet").value),rpe:Number(rpe.value),notat:$("#f-notat").value.trim()||null,
+      ovelser:[],aktivitet:null,distanse:null,puls:null,fotball:null,mal:null};
+    if(t==="styrke"){
+      o.ovelser=[...$("#ex-list").children].map(r=>{const q=r.querySelectorAll("input");return{navn:q[0].value.trim(),sett:num(q[1].value),reps:num(q[2].value),kg:num(q[3].value)}}).filter(x=>x.navn);
+    }
+    if(t==="kondisjon"){o.aktivitet=$("#f-aktivitet").value;o.distanse=num($("#f-distanse").value);o.puls=num($("#f-puls").value)}
+    if(t==="fotball"){o.fotball=$("#f-fotball").value;o.mal=$("#f-mal").value.trim()||null}
+    return o;
+  }
+  function fillForm(o){
+    resetForm();editingId=o.id;
+    $("#ty-"+o.type).checked=true;syncType();
+    $("#f-dato").value=o.dato||today();$("#f-tittel").value=o.tittel||"";$("#f-varighet").value=o.varighet??"";
+    rpe.value=o.rpe||6;syncRpe();$("#f-notat").value=o.notat||"";
+    if(o.type==="styrke"&&o.ovelser&&o.ovelser.length){$("#ex-list").innerHTML="";o.ovelser.forEach(addEx)}
+    if(o.type==="kondisjon"){$("#f-aktivitet").value=o.aktivitet||"Løping";$("#f-distanse").value=o.distanse??"";$("#f-puls").value=o.puls??""}
+    if(o.type==="fotball"){$("#f-fotball").value=o.fotball||"Lagtrening";$("#f-mal").value=o.mal||""}
+    $("#form-title").textContent="Rediger økt";$("#save").textContent="Lagre endringer";$("#cancel").hidden=false;
+    show("logg");window.scrollTo({top:0});
+  }
+  function setMsg(t,err){const m=$("#form-msg");m.textContent=t;m.classList.toggle("err",!!err)}
+
+  $("#form").addEventListener("submit",async e=>{
+    e.preventDefault();
+    const o=readForm();
+    if(!o.dato)return setMsg("Velg en dato.",true);
+    if(!o.varighet||o.varighet<=0)return setMsg("Skriv inn hvor mange minutter økta varte.",true);
+    $("#save").disabled=true;
+    try{
+      const was=!!editingId;
+      const{error}=was?await sb.from("okter").update(o).eq("id",editingId):await sb.from("okter").insert(o);
+      if(error)throw error;
+      resetForm();setMsg(was?"Endringene er lagret.":"Økta er lagret. Bra jobba!");
+      await load();
+    }catch(err){setMsg("Kunne ikke lagre: "+(err?.message||"ukjent feil"),true)}
+    finally{$("#save").disabled=false}
+  });
+
+  // ---------- historikk ----------
+  $("#filters").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;filter=b.dataset.f;document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b));renderHist()});
+
+  function renderHist(){
+    const box=$("#hist-list");box.innerHTML="";
+    const list=okter.filter(o=>filter==="alle"||o.type===filter);
+    if(!list.length){box.append(el("div",{class:"empty",text:okter.length?"Ingen økter av denne typen ennå.":"Ingen økter ennå. Gå til «Ny økt» og logg den første."}));return}
+    let curM=null,mBox=null;
+    for(const o of list){
+      const d=parse(o.dato);const key=d.getFullYear()+"-"+d.getMonth();
+      if(key!==curM){curM=key;mBox=el("div",{class:"month"},el("h3",{text:MND[d.getMonth()]+" "+d.getFullYear()}));box.append(mBox)}
+      mBox.append(entry(o));
+    }
+  }
+  function entry(o){
+    const e=el("article",{class:"entry t-"+o.type});
+    const sub=o.type==="kondisjon"?o.aktivitet:o.type==="fotball"?o.fotball:"";
+    e.append(el("div",{class:"entry-top"},
+      el("div",{},el("span",{class:"pill",text:TYPES[o.type]+(sub?" · "+sub:"")}),el("div",{class:"entry-title",text:o.tittel||sub||TYPES[o.type]})),
+      el("span",{class:"date",text:fmtDate(o.dato)})));
+    const f=el("div",{class:"facts"});
+    const add=t=>f.append(el("span",{text:t}));
+    if(o.varighet)add(o.varighet+" min");
+    if(o.rpe)add("RPE "+o.rpe);
+    if(o.distanse)add(nf(o.distanse,2)+" km");
+    if(o.distanse&&o.varighet&&o.aktivitet==="Løping"){const s=Math.round(o.varighet*60/o.distanse);add(Math.floor(s/60)+":"+String(s%60).padStart(2,"0")+" /km")}
+    if(o.puls)add(o.puls+" bpm");
+    if(o.mal)add(o.mal);
+    if(o.varighet&&o.rpe)add("Belastning "+o.varighet*o.rpe);
+    e.append(f);
+    if(o.ovelser&&o.ovelser.length){
+      const tb=el("table");
+      o.ovelser.forEach(x=>tb.append(el("tr",{},el("td",{text:x.navn}),el("td",{text:[x.sett,x.reps].filter(v=>v!=null).join(" × ")}),el("td",{text:x.kg!=null?nf(x.kg,1)+" kg":"kroppsvekt"}))));
+      e.append(el("div",{style:"overflow-x:auto"},tb));
+    }
+    if(o.notat)e.append(el("p",{text:o.notat}));
+    const ed=el("button",{type:"button",class:"btn ghost",text:"Rediger"});ed.addEventListener("click",()=>fillForm(o));
+    const del=el("button",{type:"button",class:"btn danger",text:"Slett"});
+    let t=null;
+    del.addEventListener("click",async()=>{
+      if(!del.classList.contains("armed")){del.classList.add("armed");del.textContent="Trykk igjen for å slette";t=setTimeout(()=>{del.classList.remove("armed");del.textContent="Slett"},4000);return}
+      clearTimeout(t);del.disabled=true;
+      const{error}=await sb.from("okter").delete().eq("id",o.id);
+      if(error){del.disabled=false;del.textContent="Kunne ikke slette";return}
+      if(editingId===o.id)resetForm();
+      await load();
+    });
+    e.append(el("div",{class:"actions"},ed,del));
+    return e;
+  }
+
+  // ---------- oversikt ----------
+  const NS="http://www.w3.org/2000/svg";
+  const sv=(tag,a)=>{const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);return e};
+
+  function renderOverview(){
+    const now=parse(today());
+    const since=n=>{const d=new Date(now);d.setDate(d.getDate()-n+1);return okter.filter(o=>o.dato&&parse(o.dato)>=d)};
+    const w=since(7),m=since(30);
+    const mins=a=>a.reduce((s,o)=>s+(o.varighet||0),0);
+    const load=a=>a.reduce((s,o)=>s+(o.varighet||0)*(o.rpe||0),0);
+    const st=$("#stats");st.innerHTML="";
+    const stat=(lab,val,sub)=>st.append(el("div",{class:"stat"},el("span",{text:lab}),el("b",{text:val}),el("em",{text:sub})));
+    stat("Økter siste 7 d",String(w.length),m.length+" siste 30 dager");
+    stat("Tid siste 7 d",nf(mins(w)/60,1)+" t",nf(mins(m)/60,1)+" t siste 30 dager");
+    stat("Belastning 7 d",nf(load(w)),"minutter × RPE");
+    stat("Distanse 30 d",nf(m.reduce((s,o)=>s+(Number(o.distanse)||0),0),1)+" km","kondisjonsøkter");
+
+    const W=10,mon=monday(now),weeks=[];
+    for(let i=W-1;i>=0;i--){const s=new Date(mon);s.setDate(s.getDate()-7*i);weeks.push({start:s,v:{styrke:0,kondisjon:0,fotball:0,generell:0}})}
+    okter.forEach(o=>{if(!o.dato)return;const ms=monday(parse(o.dato)).getTime();const wk=weeks.find(x=>x.start.getTime()===ms);if(wk&&wk.v[o.type]!=null)wk.v[o.type]+=o.varighet||0});
+    const max=Math.max(60,...weeks.map(x=>Object.values(x.v).reduce((a,b)=>a+b,0)));
+    const step=max<=120?30:max<=300?60:max<=600?120:240;const top=Math.ceil(max/step)*step;
+    const cw=640,ch=220,pl=40,pr=8,pt=10,pb=26,iw=cw-pl-pr,ih=ch-pt-pb,bw=iw/W;
+    const svg=sv("svg",{viewBox:`0 0 ${cw} ${ch}`,role:"img","aria-label":"Minutter trent per uke, siste 10 uker"});
+    for(let v=0;v<=top;v+=step){const y=pt+ih-ih*v/top;svg.append(sv("line",{x1:pl,x2:cw-pr,y1:y,y2:y,stroke:"var(--line)","stroke-width":1}));const t=sv("text",{x:pl-6,y:y+4,"text-anchor":"end"});t.textContent=v;svg.append(t)}
+    weeks.forEach((wk,i)=>{
+      let y=pt+ih;const x=pl+i*bw+bw*.18,w2=bw*.64;
+      ["styrke","kondisjon","fotball","generell"].forEach(k=>{const h=ih*wk.v[k]/top;if(h>0){y-=h;svg.append(sv("rect",{x,y,width:w2,height:h,fill:`var(--${k})`}))}});
+      const t=sv("text",{x:pl+i*bw+bw/2,y:ch-8,"text-anchor":"middle"});t.textContent="u"+isoWeek(wk.start);svg.append(t);
+    });
+    const wc=$("#week-chart");wc.innerHTML="";wc.append(svg);
+
+    const names=[...new Set(okter.flatMap(o=>(o.ovelser||[]).filter(x=>x.kg!=null).map(x=>x.navn)))].sort((a,b)=>a.localeCompare(b,"nb"));
+    const pick=$("#ex-pick");const prev=pick.value;pick.innerHTML="";
+    names.forEach(n=>pick.append(el("option",{value:n,text:n})));
+    if(names.includes(prev))pick.value=prev;
+    renderProg();
+  }
+  $("#ex-pick").addEventListener("change",renderProg);
+
+  function renderProg(){
+    const box=$("#prog-chart");box.innerHTML="";
+    const n=$("#ex-pick").value;
+    if(!n){box.append(el("div",{class:"empty",text:"Når du logger styrkeøvelser med kg, ser du fremgangen her."}));$("#ex-pick").hidden=true;return}
+    $("#ex-pick").hidden=false;
+    const byDate={};
+    okter.forEach(o=>(o.ovelser||[]).forEach(x=>{if(x.navn===n&&x.kg!=null&&o.dato)byDate[o.dato]=Math.max(byDate[o.dato]??0,x.kg)}));
+    const pts=Object.entries(byDate).sort((a,b)=>a[0].localeCompare(b[0]));
+    const cw=640,ch=200,pl=40,pr=16,pt=14,pb=26,iw=cw-pl-pr,ih=ch-pt-pb;
+    const vals=pts.map(p=>p[1]);let lo=Math.min(...vals),hi=Math.max(...vals);
+    if(hi===lo){lo=Math.max(0,lo-5);hi=hi+5}
+    const span=hi-lo,step=span<=10?2.5:span<=25?5:span<=60?10:20;lo=Math.floor(lo/step)*step;hi=Math.ceil(hi/step)*step;
+    const t0=parse(pts[0][0]).getTime(),t1=parse(pts[pts.length-1][0]).getTime();
+    const X=d=>pts.length===1?pl+iw/2:pl+iw*(parse(d).getTime()-t0)/(t1-t0);
+    const Y=v=>pt+ih-ih*(v-lo)/(hi-lo);
+    const svg=sv("svg",{viewBox:`0 0 ${cw} ${ch}`,role:"img","aria-label":"Tyngste vekt per økt for "+n});
+    for(let v=lo;v<=hi+1e-9;v+=step){const y=Y(v);svg.append(sv("line",{x1:pl,x2:cw-pr,y1:y,y2:y,stroke:"var(--line)","stroke-width":1}));const t=sv("text",{x:pl-6,y:y+4,"text-anchor":"end"});t.textContent=nf(v,1);svg.append(t)}
+    const d=pts.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[1]).toFixed(1)).join(" ");
+    if(pts.length>1){
+      svg.append(sv("path",{d:d+` L${X(pts[pts.length-1][0]).toFixed(1)} ${pt+ih} L${X(pts[0][0]).toFixed(1)} ${pt+ih} Z`,fill:"var(--soft)"}));
+      svg.append(sv("path",{d,fill:"none",stroke:"var(--styrke)","stroke-width":2.5,"stroke-linejoin":"round"}));
+    }
+    pts.forEach((p,i)=>{const last=i===pts.length-1;svg.append(sv("circle",{cx:X(p[0]),cy:Y(p[1]),r:last?5:3,fill:last?"var(--styrke)":"var(--surface)",stroke:"var(--styrke)","stroke-width":2}))});
+    const lab=(d,anchor)=>{const t=sv("text",{x:X(d),y:ch-8,"text-anchor":anchor});t.textContent=fmtDate(d);svg.append(t)};
+    lab(pts[0][0],pts.length===1?"middle":"start");if(pts.length>1)lab(pts[pts.length-1][0],"end");
+    const lp=pts[pts.length-1];const tl=sv("text",{x:Math.min(X(lp[0]),cw-pr)-8,y:Y(lp[1])-10,"text-anchor":"end"});tl.textContent=nf(lp[1],1)+" kg";svg.append(tl);
+    box.append(svg);
+  }
+
+  function renderAll(){
+    renderHist();
+    dl.innerHTML="";[...new Set(okter.flatMap(o=>(o.ovelser||[]).map(x=>x.navn)))].forEach(n=>dl.append(el("option",{value:n})));
+    if(!$("#view-over").hidden)renderOverview();
+  }
+
+  // ---------- oppstart ----------
+  resetForm();
+  try{const t=localStorage.getItem("trening-tab");if(t&&t!=="logg")show(t)}catch(e){}
+
+  const cfg=window.TRENING_CONFIG||{};
+  if(!window.supabase||!cfg.supabaseUrl||cfg.supabaseUrl.includes("DITT-PROSJEKT")||!cfg.supabaseKey||cfg.supabaseKey.includes("LIM_INN")){screen("config");return}
+  sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseKey);
+
+  let current=null;
+  sb.auth.onAuthStateChange((event,session)=>{
+    // Kjør utenfor callbacken, slik Supabase anbefaler.
+    setTimeout(()=>{
+      if(event==="PASSWORD_RECOVERY"){user=session?.user||null;screen("reset");return}
+      const u=session?.user||null;
+      if(!u){user=null;current=null;okter=[];screen("auth");return}
+      if(current===u.id&&event!=="SIGNED_IN"&&event!=="INITIAL_SESSION")return;
+      if(current===u.id&&!$("#app").hidden)return;
+      current=u.id;user=u;enterApp();
+    },0);
+  });
+})();
+</script>
+</body>
+</html>
